@@ -1,110 +1,161 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Discord News Parser</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-        }
-        h1 {
-            color: #333;
-        }
-        .news-container {
-            width: 80%;
-            max-width: 1000px;
-            margin: 20px;
-            background-color: #fff;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            border-radius: 8px;
-        }
-        .news-item {
-            border-bottom: 1px solid #ddd;
-            padding: 10px 0;
-        }
-        .news-item:last-child {
-            border-bottom: none;
-        }
-        .news-title {
-            font-size: 18px;
-            font-weight: bold;
-            color: #555;
-        }
-        .news-content {
-            font-size: 16px;
-            margin-top: 5px;
-        }
-        .news-time {
-            font-size: 14px;
-            color: #999;
-            margin-top: 5px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Добавление постов</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    h1 {
+      color: #333;
+    }
+
+    form {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 500px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #555;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 16px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #218838;
+    }
+
+    #notification {
+      display: none;
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 4px;
+      text-align: center;
+    }
+
+    #notification.success {
+      background-color: #28a745;
+      color: white;
+    }
+
+    #notification.error {
+      background-color: #dc3545;
+      color: white;
+    }
+  </style>
+  <script type="module">
+    // Импорт SDK Firebase
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+    import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js";
+
+    // Конфигурация Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyAHMfe4YYJTanLwdTAuGzwm1s9Fn5mvG6E",
+      authDomain: "iglauncher.firebaseapp.com",
+      databaseURL: "https://iglauncher-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "iglauncher",
+      storageBucket: "iglauncher.appspot.com",
+      messagingSenderId: "702649269374",
+      appId: "1:702649269374:web:0a1c1d4c83276f7cf42c2f",
+      measurementId: "G-TXHPP4N6ZZ"
+    };
+
+    // Инициализация Firebase
+    const app = initializeApp(firebaseConfig);
+    const database = getDatabase(app);
+
+    // Функция для добавления поста в базу данных
+    function addPost(event) {
+      event.preventDefault();
+      const title = document.getElementById('title').value;
+      const text = document.getElementById('text').value;
+      const notification = document.getElementById('notification');
+
+      if (title && text) {
+        // Добавление данных в Firebase Realtime Database
+        const postsRef = ref(database, 'posts');
+        const newPostRef = push(postsRef);
+        newPostRef.set({
+          title: title,
+          text: text
+        }).then(() => {
+          notification.textContent = 'Пост успешно добавлен!';
+          notification.className = 'success';
+          notification.style.display = 'block';
+
+          // Очищаем форму после добавления поста
+          document.getElementById('postForm').reset();
+
+          // Скрываем уведомление через 3 секунды
+          setTimeout(() => {
+            notification.style.display = 'none';
+          }, 3000);
+        }).catch((error) => {
+          notification.textContent = 'Ошибка при добавлении поста: ' + error.message;
+          notification.className = 'error';
+          notification.style.display = 'block';
+
+          // Скрываем уведомление через 3 секунды
+          setTimeout(() => {
+            notification.style.display = 'none';
+          }, 3000);
+        });
+      } else {
+        notification.textContent = 'Пожалуйста, заполните все поля.';
+        notification.className = 'error';
+        notification.style.display = 'block';
+
+        // Скрываем уведомление через 3 секунды
+        setTimeout(() => {
+          notification.style.display = 'none';
+        }, 3000);
+      }
+    }
+  </script>
 </head>
 <body>
-    <h1>Latest Discord News</h1>
-    <div class="news-container" id="newsContainer">
-        <!-- News will be displayed here -->
-    </div>
-
-    <script>
-        // Example data simulating fetched news from Discord
-        const news = [
-            {
-                title: "New Update Released!",
-                content: "The latest update includes several new features and bug fixes.",
-                time: "2024-10-10 12:30 PM"
-            },
-            {
-                title: "Server Maintenance",
-                content: "The server will be undergoing maintenance on 2024-10-11 at 1:00 AM UTC.",
-                time: "2024-10-09 11:00 AM"
-            },
-            {
-                title: "Event Announcement",
-                content: "Join us for a live event on 2024-10-15 to discuss upcoming projects.",
-                time: "2024-10-08 10:00 AM"
-            }
-        ];
-
-        function displayNews() {
-            const container = document.getElementById('newsContainer');
-            news.forEach(item => {
-                const newsItem = document.createElement('div');
-                newsItem.classList.add('news-item');
-
-                const title = document.createElement('div');
-                title.classList.add('news-title');
-                title.textContent = item.title;
-
-                const content = document.createElement('div');
-                content.classList.add('news-content');
-                content.textContent = item.content;
-
-                const time = document.createElement('div');
-                time.classList.add('news-time');
-                time.textContent = `Published: ${item.time}`;
-
-                newsItem.appendChild(title);
-                newsItem.appendChild(content);
-                newsItem.appendChild(time);
-
-                container.appendChild(newsItem);
-            });
-        }
-
-        // Simulate fetching data on load
-        document.addEventListener('DOMContentLoaded', displayNews);
-    </script>
+  <form id="postForm" onsubmit="addPost(event)">
+    <h1>Добавить новый пост</h1>
+    <label for="title">Заголовок:</label>
+    <input type="text" id="title" name="title">
+    
+    <label for="text">Текст:</label>
+    <textarea id="text" name="text" rows="4" cols="50"></textarea>
+    
+    <button type="submit">Добавить пост</button>
+    <div id="notification"></div>
+  </form>
 </body>
 </html>
