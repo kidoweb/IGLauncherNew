@@ -196,16 +196,20 @@
 
 <body>
   <form id="postForm">
-    <h1>Добавить новый пост</h1>
-    <label for="title">Заголовок:</label>
-    <input type="text" id="title" name="title" placeholder="Введите заголовок">
+  <h1>Добавить новый пост</h1>
+  <label for="title">Заголовок:</label>
+  <input type="text" id="title" name="title" placeholder="Введите заголовок">
 
-    <label for="text">Текст:</label>
-    <textarea id="text" name="text" rows="4" placeholder="Введите текст поста"></textarea>
+  <label for="text">Текст:</label>
+  <textarea id="text" name="text" rows="4" placeholder="Введите текст поста"></textarea>
 
-    <button type="submit">Добавить пост</button>
-    <div id="notification"></div>
-  </form>
+  <label for="password">Пароль:</label>
+  <input type="password" id="password" name="password" placeholder="Введите пароль">
+
+  <button type="submit">Добавить пост</button>
+  <div id="notification"></div>
+</form>
+
 </body>
 
 </html>
