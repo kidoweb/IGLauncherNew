@@ -1,4 +1,144 @@
-function addPost(event) {
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Добавление постов</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(135deg, #6e8efb, #a777e3);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    form {
+      background-color: #ffffff;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 400px;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.3s ease;
+    }
+
+    form:hover {
+      transform: translateY(-5px);
+    }
+
+    h1 {
+      font-size: 26px;
+      margin-bottom: 20px;
+      color: #333333;
+      text-align: center;
+    }
+
+    label {
+      font-size: 14px;
+      color: #555555;
+      margin-bottom: 5px;
+    }
+
+    input[type="text"],
+    textarea {
+      padding: 14px;
+      margin-bottom: 20px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 14px;
+      color: #333333;
+      background-color: #fafafa;
+      transition: border-color 0.3s ease, background-color 0.3s ease;
+    }
+
+    input[type="text"]:focus,
+    textarea:focus {
+      outline: none;
+      border-color: #6e8efb;
+      background-color: #ffffff;
+    }
+
+    button {
+      padding: 12px;
+      background: linear-gradient(135deg, #6e8efb, #a777e3);
+      color: #ffffff;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #5a7efb;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    #notification {
+      display: none;
+      padding: 14px;
+      border-radius: 8px;
+      margin-top: 10px;
+      font-size: 14px;
+      text-align: center;
+      transition: opacity 0.3s ease;
+    }
+
+    #notification.success {
+      background-color: #28a745;
+      color: white;
+    }
+
+    #notification.error {
+      background-color: #dc3545;
+      color: white;
+    }
+
+    @media (max-width: 500px) {
+      form {
+        width: 90%;
+      }
+
+      h1 {
+        font-size: 22px;
+      }
+    }
+  </style>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+    import { getDatabase, ref, push, set } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAHMfe4YYJTanLwdTAuGzwm1s9Fn5mvG6E",
+      authDomain: "iglauncher.firebaseapp.com",
+      databaseURL: "https://iglauncher-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "iglauncher",
+      storageBucket: "iglauncher.appspot.com",
+      messagingSenderId: "702649269374",
+      appId: "1:702649269374:web:0a1c1d4c83276f7cf42c2f",
+      measurementId: "G-TXHPP4N6ZZ"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const database = getDatabase(app);
+
+    window.onload = () => {
+      const form = document.getElementById('postForm');
+      form.addEventListener('submit', addPost);
+    };
+
+    function addPost(event) {
   event.preventDefault(); // Останавливает стандартное поведение формы
 
   const title = document.getElementById('title').value;
@@ -50,3 +190,22 @@ function addPost(event) {
     }, 3000);
   }
 }
+
+  </script>
+</head>
+
+<body>
+  <form id="postForm">
+    <h1>Добавить новый пост</h1>
+    <label for="title">Заголовок:</label>
+    <input type="text" id="title" name="title" placeholder="Введите заголовок">
+
+    <label for="text">Текст:</label>
+    <textarea id="text" name="text" rows="4" placeholder="Введите текст поста"></textarea>
+
+    <button type="submit">Добавить пост</button>
+    <div id="notification"></div>
+  </form>
+</body>
+
+</html>
